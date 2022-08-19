@@ -1,6 +1,6 @@
 import vk_api,io
 import json as json_parser
-from resourses.lxml import html
+from lxml import html
 class Audio(object):
     def __init__(self,vkaudio,owner_id,playlistsReorderHash=None,audiosReorderHash=None,newPlaylistHash=None,listenedHash=None,playlistCoverUploadOptions=None,audios_loaded=False):
         from .audio_list import AudioList

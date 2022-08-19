@@ -1,4 +1,4 @@
-from resourses.lxml import html
+from lxml import html
 from .audio import Audio;
 import re,json as json_parser
 from html import unescape

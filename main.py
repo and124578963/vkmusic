@@ -1,8 +1,6 @@
-import copy
-
 from resourses.vk_audio import *
-from resourses.vk_api import *
-from resourses.vkaudiotoken import get_kate_token, get_vk_official_token
+from vk_api import *
+from vkaudiotoken import get_kate_token, get_vk_official_token
 import requests
 import pickle
 
@@ -91,10 +89,12 @@ if command == 'find':
     list_name_and_id = get_list_id(value)
     for row in list_name_and_id:
         print(row[0], ';;', row[1])
+    exit(0)
 elif command == "get":
     #принемает id из результата find
     name, url = get_url_music_by_id(value)
     print(name, ';;', url)
+    exit(0)
 else:
     print("Используйте ключи find '<Название песни>' или get '<id из результата find>'")
     exit(1)
