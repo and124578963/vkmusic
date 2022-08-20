@@ -1,4 +1,5 @@
 import os
+import sys
 
 from resourses.vk_audio import *
 from vk_api import *
@@ -81,17 +82,22 @@ try:
 
 except:
     print("Используйте ключи find '<Название песни>' или get '<id из результата find>'")
+    exit(1)
 
 if command == 'find':
     #принемает строку названия поиска
     list_name_and_id = get_list_id(value)
     for row in list_name_and_id:
-        print(row[0], ';;', row[1])
+        result = row[0] + ';;' + row[1] + '\n'
+        sys.stdout.buffer.write(result.encode('utf8'))
+
+
     exit(0)
 elif command == "get":
     #принемает id из результата find
     name, url = get_url_music_by_id(value)
-    print(name, ';;', url)
+    result = name + ';;' + url
+    sys.stdout.buffer.write(result.encode('utf8'))
     exit(0)
 else:
     print("Используйте ключи find '<Название песни>' или get '<id из результата find>'")
