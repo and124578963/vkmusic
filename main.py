@@ -1,3 +1,5 @@
+import os
+
 from resourses.vk_audio import *
 from vk_api import *
 from vkaudiotoken import get_kate_token, get_vk_official_token
@@ -10,9 +12,9 @@ from sys import argv
 
 def get_login_password():
     config = configparser.ConfigParser()
-    config.read('AUTH.properties')
-    return [config['AUTH']['login'], config['AUTH']['password']]
+    config.read(get_abs_path('AUTH.properties'))
 
+    return [config['AUTH']['login'], config['AUTH']['password']]
 
 #Получаем токен KateMobile, который позволяет скачивать музыку по id
 def auth_kate_mobile():
@@ -27,19 +29,9 @@ def auth_kate_mobile():
             code = input("SMS CODE: >>> ")
 
         info = get_kate_token(login, password, code)
-    with open('auth_info_kmobile.pkl', 'wb') as auth_file:
+    with open(get_abs_path('auth_info_kmobile.pkl'), 'wb') as auth_file:
         pickle.dump(info, auth_file, 4)
 
-
-#Получаем токен от VKApi, который позволяет делать поиск песен
-def auth_vk_api():
-    login, password = get_login_password()
-
-    vk_session = vk_api.VkApi(login=login, password=password)
-    vk_session.auth(token_only=True)
-    print(vk_session)
-    with open('auth_info_VKApi.pkl', 'wb') as auth_file:
-        pickle.dump(vk_session, auth_file, 4)
 
 #Получаем список 10 первых найденных песен: [('название', 'id'),...]
 def get_list_id(name_music):
@@ -53,7 +45,7 @@ def get_list_id(name_music):
 #Передаем id песни, получаем ['название', 'url cылку на mp3']
 def get_url_music_by_id(music_id, check_first=True):
     try:
-        with open('auth_info_kmobile.pkl', 'rb') as auth_file:
+        with open(get_abs_path('auth_info_kmobile.pkl'), 'rb') as auth_file:
             info = pickle.load(auth_file)
 
         sess = requests.session()
@@ -79,8 +71,14 @@ def get_url_music_by_id(music_id, check_first=True):
             auth_kate_mobile()
             return get_url_music_by_id(music_id, check_first=False)
 
+def get_abs_path(file_name):
+    script = os.path.basename(__file__)
+    path = os.path.abspath(__file__).replace(script,'')
+    return path + file_name
+
 try:
     script, command, value = argv
+
 except:
     print("Используйте ключи find '<Название песни>' или get '<id из результата find>'")
 
