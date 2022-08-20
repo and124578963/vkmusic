@@ -38,7 +38,7 @@ def auth_kate_mobile():
 def get_list_id(name_music):
     login, password = get_login_password()
     vk_session = vk_api.VkApi(login=login, password=password)
-    vk_session.auth()
+    vk_session.auth(token_only=True)
     vk = vk_audio.VkAudio(vk=vk_session)
     return vk.search(name_music)
 
