@@ -3,7 +3,7 @@ from .audio import *
 from .audio_enum_index import *
 import json as json_parser
 import vk_api, json, random
-import vk_audio_C_FUNC as func_c
+# import vk_audio_C_FUNC as func_c
 class VkAudio(object):
     @property
     def _enum_p(self):
@@ -157,10 +157,11 @@ class VkAudio(object):
         return False
     def _parse_json_from_js(self,js):
         if(not isinstance(js,str)):raise TypeError("js have to be str")
-        q = func_c.parse_json_from_js(js);
-        return json_parser.loads(q);
+        # q = func_c.parse_json_from_js(js);
+        q=''
+        return json_parser.loads(q)
 
-    
+
     @staticmethod
     def json(resp):
         try:

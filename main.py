@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import sys
 
@@ -35,10 +36,18 @@ def auth_kate_mobile():
 
 
 #Получаем список 10 первых найденных песен: [('название', 'id'),...]
-def get_list_id(name_music):
+def get_list_id(name_music, token_only=True):
+    try:
+        with open(get_abs_path('auth_info_kmobile.pkl'), 'rb') as auth_file:
+            info = pickle.load(auth_file)
+    except FileNotFoundError:
+        auth_kate_mobile()
+        with open(get_abs_path('auth_info_kmobile.pkl'), 'rb') as auth_file:
+            info = pickle.load(auth_file)
+
     login, password = get_login_password()
-    vk_session = vk_api.VkApi(login=login, password=password)
-    vk_session.auth(token_only=True)
+    vk_session = vk_api.VkApi(login=login, password=password, token=info['token'], app_id=2685278)
+    vk_session.auth(token_only=token_only)
     vk = vk_audio.VkAudio(vk=vk_session)
     return vk.search(name_music)
 
@@ -51,7 +60,7 @@ def get_url_music_by_id(music_id, check_first=True):
 
         sess = requests.session()
 
-        sess.headers.update({'User-Agent': info["user_agent"]})
+        sess.headers.update({'User-Agent': info["user_agent"], 'Accept-Encoding': 'gzip, deflate'})
 
         track_list = sess.get(
             # "https://api.vk.com/method/audio.get",
@@ -72,6 +81,41 @@ def get_url_music_by_id(music_id, check_first=True):
             auth_kate_mobile()
             return get_url_music_by_id(music_id, check_first=False)
 
+
+
+def test():
+
+    with open(get_abs_path('auth_info_kmobile.pkl'), 'rb') as auth_file:
+        info = pickle.load(auth_file)
+
+    sess = requests.session()
+
+
+
+
+    sess.headers.update({'User-Agent': info["user_agent"], 'X-Requested-With':'XMLHttpRequest'})
+
+
+    track_list = sess.post(
+        # "https://api.vk.com/method/audio.get",
+        "https://vk.com/al_audio.php?act=section",
+        params=[
+                ('act', 'section'),
+                ('al', 1),
+                ('claim', 0),
+                ('is_layer', 0),
+                ('owner_id', '693703972'),
+                ('q', 'test'),
+                ('section', 'search'),
+                # ('user_id', user_id),
+                # ("count", 2),
+                # ("offset", 0),
+                # ('v', '5.89')]
+                ("v", "5.92"), ]
+    ).json()
+    print(track_list)
+
+
 def get_abs_path(file_name):
     script = os.path.basename(__file__)
     path = os.path.abspath(__file__).replace(script,'')
@@ -87,6 +131,7 @@ except:
 if command == 'find':
     #принемает строку названия поиска
     list_name_and_id = get_list_id(value)
+    if len(list_name_and_id) == 0: get_list_id(value, token_only=False)
     for row in list_name_and_id:
         result = row[0] + ';;' + row[1] + '\n'
         sys.stdout.buffer.write(result.encode('utf8'))
@@ -99,6 +144,8 @@ elif command == "get":
     result = name + ';;' + url
     sys.stdout.buffer.write(result.encode('utf8'))
     exit(0)
+elif command == "test":
+    test()
 else:
     print("Используйте ключи find '<Название песни>' или get '<id из результата find>'")
     exit(1)

@@ -1,6 +1,6 @@
 import json as json_parser
 from .playlist import Playlist
-import vk_audio_C_FUNC as func_c
+# import vk_audio_C_FUNC as func_c
 from html import unescape
 class AudioObj(object):
     def __init__(self,enum):
@@ -102,7 +102,7 @@ class AudioObj(object):
                 self.get_url_with[i].as_object(item);
         if not self.__decoded and self._url:
             self.__decoded=True
-            self._url=func_c.decode(self._url,self._vk_audio.uid)
+            # self._url=func_c.decode(self._url,self._vk_audio.uid)
         return self._url
     #endregion
     def artist_music(self,index=0):

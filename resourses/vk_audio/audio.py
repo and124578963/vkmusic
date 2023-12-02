@@ -42,6 +42,7 @@ class Audio(object):
         if(isinstance(html_code,str)):html_code = html.fromstring(html_code);
         # print(html_code.find_class("audio_pl_item2"))
         list_result = []
+
         for i in html_code.find_class("audio_can_add"):
             data = i.attrib['data-audio'].split(',')
 
